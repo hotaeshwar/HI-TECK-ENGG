@@ -79,7 +79,7 @@ const Navbar = () => {
       className={`
         fixed top-0 left-0 w-full z-50 transition-all duration-300
         ${isScrolled 
-          ? 'bg-white/90 shadow-md backdrop-blur-sm' 
+          ? 'lg:bg-white/90 lg:shadow-md lg:backdrop-blur-sm' 
           : 'bg-transparent'}
       `}
     >
@@ -138,9 +138,8 @@ const Navbar = () => {
           <div className="lg:hidden flex items-center">
             <button 
               onClick={toggleMenu}
-              className={`hover:text-blue-600 focus:outline-none 
-              transition-colors duration-300 ease-in-out
-              ${isScrolled ? 'text-black' : 'text-white'}`}
+              className="text-black hover:text-blue-600 focus:outline-none 
+              transition-colors duration-300 ease-in-out"
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -154,7 +153,7 @@ const Navbar = () => {
             ? 'opacity-100 translate-y-0 visible' 
             : 'opacity-0 -translate-y-4 invisible'}`}
         >
-          <div className="px-2 pt-2 pb-3 space-y-2 sm:px-3 bg-white/90 rounded-b-lg shadow-lg">
+          <div className="px-2 pt-2 pb-3 space-y-2 sm:px-3 backdrop-blur-md bg-black/30 rounded-b-lg">
             {navLinks.map((link) => (
               <a 
                 key={link.name}
@@ -167,8 +166,8 @@ const Navbar = () => {
                   block px-3 py-2 rounded-md text-lg font-bold 
                   transition-all duration-500 ease-in-out
                   ${activeLink === link.name 
-                    ? 'bg-blue-100 text-blue-700' 
-                    : 'text-black hover:bg-blue-50 hover:text-blue-600'}
+                    ? 'bg-blue-600/20 text-blue-400' 
+                    : 'text-white hover:bg-blue-500/20 hover:text-blue-300'}
                 `}
               >
                 {link.name}
