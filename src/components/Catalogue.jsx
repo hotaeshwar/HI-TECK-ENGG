@@ -52,7 +52,7 @@ const Catalogue = () => {
           // Staggered animation with increased delay between cards
           setTimeout(() => {
             entry.target.classList.add('card-visible');
-          }, 300 * index); // Increased to 300ms between each card for more noticeable staggering
+          }, 300 * index); // 300ms between each card for noticeable staggering
           observer.unobserve(entry.target);
         }
       });
@@ -90,17 +90,22 @@ const Catalogue = () => {
           <div className="h-1 w-24 bg-gradient-to-r from-blue-400 to-indigo-500 mx-auto mt-6 rounded-full"></div>
         </div>
 
-        {/* Catalogue Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {catalogueItems.map((item) => (
+        {/* Catalogue Grid - Fixed to ensure consistent height and layout */}
+        <div className="flex flex-col md:flex-row justify-center items-stretch gap-8 max-w-6xl mx-auto">
+          {catalogueItems.map((item, index) => (
             <div 
               key={item.id} 
-              className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden card-reveal opacity-0 transform translate-y-8 border border-gray-100"
+              className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden card-reveal opacity-0 transform translate-y-8 border border-gray-100 flex flex-col w-full md:w-1/3"
+              style={{ 
+                transitionDelay: `${index * 100}ms`,
+                visibility: 'visible', // Ensures the card is visible before animation
+                minHeight: '680px' // Set fixed minimum height to ensure consistent sizing
+              }}
             >
               {/* Top Gradient Bar */}
               <div className={`h-2 w-full bg-gradient-to-r ${item.color}`}></div>
               
-              <div className="p-8 flex flex-col items-center text-center">
+              <div className="p-8 flex flex-col items-center text-center h-full">
                 {/* Icon Section */}
                 <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${item.color} flex items-center justify-center text-white mb-6`}>
                   <FontAwesomeIcon 
@@ -117,7 +122,7 @@ const Catalogue = () => {
                   {item.description}
                 </p>
                 
-                {/* File Type Icon */}
+                {/* File Type Icon - Fixed height to ensure alignment */}
                 <div className="w-full h-40 bg-gray-100 mb-8 rounded-lg flex flex-col items-center justify-center">
                   <svg 
                     xmlns="http://www.w3.org/2000/svg" 
@@ -139,25 +144,28 @@ const Catalogue = () => {
                   <span className="text-gray-500 font-medium">{item.title}</span>
                 </div>
                 
-                <button 
-                  onClick={() => handleDownload(item.file, item.fileName)}
-                  className={`download-btn w-full flex items-center justify-center 
-                    bg-gradient-to-r ${item.color} text-white 
-                    py-3 px-6
-                    text-base font-medium
-                    rounded-xl
-                    transition-all duration-300
-                    hover:shadow-lg
-                    transform hover:scale-102
-                    active:scale-98`}
-                >
-                  <Download className="mr-2 download-icon" size={20} />
-                  Download Catalogue
-                </button>
-                
-                <p className="text-xs text-gray-400 mt-4">
-                  PDF • {item.fileSize}
-                </p>
+                {/* Push download button to bottom and ensure it stays within card */}
+                <div className="mt-auto w-full">
+                  <button 
+                    onClick={() => handleDownload(item.file, item.fileName)}
+                    className={`download-btn w-full flex items-center justify-center 
+                      bg-gradient-to-r ${item.color} text-white 
+                      py-3 px-6
+                      text-base font-medium
+                      rounded-xl
+                      transition-all duration-300
+                      hover:shadow-lg
+                      transform hover:scale-102
+                      active:scale-98`}
+                  >
+                    <Download className="mr-2 download-icon" size={20} />
+                    Download Catalogue
+                  </button>
+                  
+                  <p className="text-xs text-gray-400 mt-4">
+                    PDF • {item.fileSize}
+                  </p>
+                </div>
               </div>
             </div>
           ))}
