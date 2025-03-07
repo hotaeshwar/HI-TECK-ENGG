@@ -11,9 +11,23 @@ const Navbar = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleLinkClick = (name) => {
+  // Enhanced link click handler with smooth scrolling
+  const handleLinkClick = (name, href) => {
     setActiveLink(name);
     setIsOpen(false);
+    
+    // Smooth scroll to the element
+    const element = document.querySelector(href);
+    if (element) {
+      const navbarHeight = 80; // Adjust based on your navbar height
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
+      
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
+    }
   };
 
   // Handle scroll effect
@@ -28,6 +42,30 @@ const Navbar = () => {
     };
   }, []);
 
+  // Add scroll padding to account for navbar
+  useEffect(() => {
+    // Create a style element
+    const style = document.createElement('style');
+    style.innerHTML = `
+      html {
+        scroll-padding-top: 80px; /* Adjust based on your navbar height */
+        scroll-behavior: smooth;
+      }
+      section {
+        padding-top: 100px; /* Consistent section padding */
+        padding-bottom: 40px;
+      }
+    `;
+    
+    // Append to head
+    document.head.appendChild(style);
+    
+    // Cleanup
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
   const navLinks = [
     { name: 'Home', href: '#home' },
     { name: 'About', href: '#about' },
@@ -39,9 +77,9 @@ const Navbar = () => {
   return (
     <nav 
       className={`
-        absolute lg:fixed top-0 left-0 w-full z-50 transition-all duration-300
+        fixed top-0 left-0 w-full z-50 transition-all duration-300
         ${isScrolled 
-          ? 'lg:bg-white/90 lg:shadow-md lg:backdrop-blur-sm bg-transparent' 
+          ? 'bg-white/90 shadow-md backdrop-blur-sm' 
           : 'bg-transparent'}
       `}
     >
@@ -49,7 +87,14 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <div className="flex items-center">
-            <a href="#home" className="flex items-center">
+            <a 
+              href="#home" 
+              onClick={(e) => {
+                e.preventDefault();
+                handleLinkClick('Home', '#home');
+              }}
+              className="flex items-center"
+            >
               <img 
                 src={logo} 
                 alt="Hi-Teck Engineering Works Logo" 
@@ -64,14 +109,19 @@ const Navbar = () => {
               <a 
                 key={link.name}
                 href={link.href} 
-                onClick={() => handleLinkClick(link.name)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleLinkClick(link.name, link.href);
+                }}
                 className={`
                   text-base lg:text-lg font-extrabold tracking-wider uppercase
                   relative overflow-hidden group
                   transition-all duration-500 ease-in-out
                   ${activeLink === link.name 
                     ? 'text-blue-600' 
-                    : 'text-white lg:text-black hover:text-blue-600'}
+                    : isScrolled 
+                      ? 'text-black hover:text-blue-600' 
+                      : 'text-white hover:text-blue-600'}
                 `}
               >
                 <span 
@@ -88,8 +138,9 @@ const Navbar = () => {
           <div className="lg:hidden flex items-center">
             <button 
               onClick={toggleMenu}
-              className="text-black hover:text-blue-600 focus:outline-none 
-              transition-colors duration-300 ease-in-out"
+              className={`hover:text-blue-600 focus:outline-none 
+              transition-colors duration-300 ease-in-out
+              ${isScrolled ? 'text-black' : 'text-white'}`}
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -108,7 +159,10 @@ const Navbar = () => {
               <a 
                 key={link.name}
                 href={link.href}
-                onClick={() => handleLinkClick(link.name)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleLinkClick(link.name, link.href);
+                }}
                 className={`
                   block px-3 py-2 rounded-md text-lg font-bold 
                   transition-all duration-500 ease-in-out
